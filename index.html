@@ -1,26 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vacation Countdown</title>
+  <title>Countdown to Vacation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 20%; }
-    #countdown { font-size: 2em; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      height: 100%;
+      overflow: hidden;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+      text-align: center;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+    }
+
+    .main-box {
+      background: url('pencilDrawing.png') center center no-repeat;
+      background-size: contain;
+      background-color: #f0f0f0;
+      padding: 2em;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      text-align: center;
+
+      -webkit-mask-image: 
+        linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
+      -webkit-mask-composite: destination-in;
+      mask-image: 
+        linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
+      mask-composite: intersect;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      filter: brightness(1.15) contrast(1.1) grayscale(100%) sepia(0%);
+    }
+
+    #countdown {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 1em;
+    }
+
+    h1, #countdown {
+      text-shadow:
+        -1px -1px 1px rgba(255,255,255,0.1),
+        1px -1px 1px rgba(255,255,255,0.1),
+        -1px  1px 1px rgba(255,255,255,0.1),
+        1px  1px 1px rgba(255,255,255,0.1);
+    }
+
+
+
+    #messages {
+      position: fixed;
+      bottom: 40px;
+      left: 40px;
+      font-size: 1.2em;
+      font-style: italic;
+      color: #333;
+      opacity: 0;
+      max-width: 300px;
+      pointer-events: none;
+    }
+
+    @keyframes floatMessage {
+      0%   { opacity: 0; transform: translateY(20px); }
+      10%  { opacity: 1; transform: translateY(0); }
+      90%  { opacity: 1; transform: translateY(-10px); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+
+    .show-message {
+      animation: floatMessage 5s ease forwards;
+    }
+
+    @media screen and (max-width: 600px) {
+      #messages {
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        text-align: center;
+        font-size: 1em;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Countdown to Vacation</h1>
-  <div id="countdown"></div>
+  <div class="main-box">
+    <h1>Countdown to Italy</h1>
+    <div id="countdown"></div>
+  </div>
+  <div id="messages"></div>
 
   <script>
     const targetDate = new Date("2025-07-12T17:00:00");
+    const countdownEl = document.getElementById("countdown");
+    const messagesEl = document.getElementById("messages");
 
     function updateCountdown() {
       const now = new Date();
       const diff = targetDate - now;
 
       if (diff <= 0) {
-        document.getElementById("countdown").innerHTML = "It's vacation time!";
+        countdownEl.innerHTML = "Let's goooo! 🛫🍷";
         return;
       }
 
@@ -29,12 +127,40 @@
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
-      document.getElementById("countdown").innerHTML =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
-    setInterval(updateCountdown, 1000);
+    // Fun preparation messages
+    const funMessages = [
+      "filling the ocean 🌊",
+      "frying the sand golden 🏖️",
+      "polishing the gelato spoons 🍦",
+      "warming the Vespa engines 🛵",
+      "packing the pasta 🍝",
+      "inflating the pizza crusts 🍕",
+      "tuning the beach vibes 🎶",
+      "recharging the sunsets 🌅",
+      "cooling the Aperol 🍹",
+      "washing the waves 🧼"
+    ];
+
+    let msgIndex = 0;
+    function rotateMessage() {
+      messagesEl.classList.remove("show-message");
+      void messagesEl.offsetWidth; // Force reflow to reset animation
+      messagesEl.textContent = "... " + funMessages[msgIndex];
+      messagesEl.classList.add("show-message");
+      msgIndex = (msgIndex + 1) % funMessages.length;
+    }
+
+
+    // Initial run
     updateCountdown();
+    rotateMessage();
+
+    // Intervals
+    setInterval(updateCountdown, 1000);
+    setInterval(rotateMessage, 5000);
   </script>
 </body>
 </html>
